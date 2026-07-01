@@ -1,15 +1,53 @@
 #udemy-translate-overlay {
-  position: fixed; /* fijo a la pantalla, no a la página */
+  position: fixed;
   max-width: 70%;
-  background: rgba(0, 0, 0, 0.8);
-  color: #ffd54f;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.7) transparent; /* Firefox */
+  background: rgba(0, 0, 0, 0.92);
+  color: #ffffff;
   line-height: 1.4;
   padding: 6px 14px;
   border-radius: 4px;
-  text-align: center;
-  z-index: 2147483647; /* por encima de todo, incluido el reproductor en fullscreen */
-  pointer-events: none;
+  text-align: left;
+  z-index: 2147483647;
+  pointer-events: auto;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+#udemy-translate-overlay::-webkit-scrollbar {
+  width: 5px;
+}
+
+#udemy-translate-overlay::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#udemy-translate-overlay::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 3px;
+}
+
+#udemy-translate-overlay::-webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+}
+
+#udemy-translate-overlay ul {
+  margin: 0;
+  padding: 0 0 0 18px;
+  list-style: disc;
+}
+
+.udemy-history-item {
+  margin: 3px 0;
+  padding: 0;
+  opacity: 0.55;
+  font-size: 0.8em;
+}
+
+.udemy-history-item.current {
+  opacity: 1;
+  font-size: 1em;
 }
 
 #udemy-translate-error-badge {

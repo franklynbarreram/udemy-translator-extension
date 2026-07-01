@@ -1,6 +1,6 @@
-// ===== Udemy Subtítulos en Español =====
+// ===== Udemy: Traductor de Subtítulos =====
 // Detecta el subtítulo activo en el reproductor de Udemy, lo traduce
-// y lo muestra superpuesto sobre el video.
+// al idioma elegido y lo muestra superpuesto sobre el video.
 
 (function () {
   // Espaciado mínimo entre llamadas a cada API para no chocar con sus
@@ -9,6 +9,7 @@
     gemini: 4300, // free tier: 15 RPM
     groq: 2200, // free tier: 30 RPM
   };
+
 
   const PROVIDER_LABELS = { gemini: "Gemini", groq: "Groq" };
 
@@ -27,6 +28,9 @@
     lastApiCallAt: 0,
     lastApiError: "",
     cache: new Map(),
+    history: [],
+    maxHistory: 20,
+    historyHeight: 200,
   };
 
   // Varios selectores de respaldo por si Udemy cambia los nombres de clase.
@@ -60,14 +64,29 @@
   }
 
   function applyPosition(overlay) {
-    // Posición exacta como % del ancho/alto de la ventana, con el texto
-    // centrado en ese punto (top/left + translate(-50%, -50%)).
     overlay.style.top = STATE.positionPercent + "%";
     overlay.style.left = STATE.positionPercentX + "%";
     overlay.style.bottom = "";
     overlay.style.right = "";
     overlay.style.transform = "translate(-50%, -50%)";
     overlay.style.fontSize = STATE.fontSize + "px";
+    overlay.style.maxHeight = STATE.historyHeight + "px";
+  }
+
+  function renderHistory(overlay) {
+    overlay.innerHTML = "";
+    const ul = document.createElement("ul");
+    STATE.history.forEach((item, i) => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      li.className =
+        i === STATE.history.length - 1
+          ? "udemy-history-item current"
+          : "udemy-history-item";
+      ul.appendChild(li);
+    });
+    overlay.appendChild(ul);
+    overlay.scrollTop = overlay.scrollHeight;
   }
 
   function ensureErrorBadge() {
@@ -295,7 +314,15 @@
     STATE.lastOriginalText = text;
 
     const translated = await translate(text);
-    overlay.textContent = translated || text;
+    const displayText = translated || text;
+
+    const last = STATE.history[STATE.history.length - 1];
+    if (last !== displayText) {
+      STATE.history.push(displayText);
+      if (STATE.history.length > STATE.maxHistory) STATE.history.shift();
+    }
+
+    renderHistory(overlay);
     overlay.style.display = "block";
     updateErrorBadge();
   }
@@ -308,6 +335,8 @@
         positionPercent: 50,
         positionPercentX: 50,
         fontSize: 20,
+        maxHistory: 20,
+        historyHeight: 200,
         provider: "free",
         geminiApiKey: "",
         groqApiKey: "",
@@ -319,6 +348,8 @@
         STATE.positionPercent = items.positionPercent;
         STATE.positionPercentX = items.positionPercentX;
         STATE.fontSize = items.fontSize;
+        STATE.maxHistory = items.maxHistory;
+        STATE.historyHeight = items.historyHeight;
         STATE.provider = items.provider;
         STATE.geminiApiKey = items.geminiApiKey;
         STATE.groqApiKey = items.groqApiKey;
@@ -333,11 +364,17 @@
     if (changes.positionPercent) STATE.positionPercent = changes.positionPercent.newValue;
     if (changes.positionPercentX) STATE.positionPercentX = changes.positionPercentX.newValue;
     if (changes.fontSize) STATE.fontSize = changes.fontSize.newValue;
+    if (changes.maxHistory) {
+      STATE.maxHistory = changes.maxHistory.newValue;
+      while (STATE.history.length > STATE.maxHistory) STATE.history.shift();
+    }
+    if (changes.historyHeight) STATE.historyHeight = changes.historyHeight.newValue;
     if (changes.provider) {
       STATE.provider = changes.provider.newValue;
       STATE.lastOriginalText = "";
       STATE.lastGoodTranslation = "";
       STATE.lastApiError = "";
+      STATE.history = [];
     }
     if (changes.geminiApiKey) STATE.geminiApiKey = changes.geminiApiKey.newValue;
     if (changes.groqApiKey) STATE.groqApiKey = changes.groqApiKey.newValue;
@@ -346,12 +383,14 @@
       STATE.cache.clear();
       STATE.lastOriginalText = "";
       STATE.lastGoodTranslation = "";
+      STATE.history = [];
     }
     if (changes.targetLang) {
       STATE.targetLang = changes.targetLang.newValue;
       STATE.cache.clear();
       STATE.lastOriginalText = "";
       STATE.lastGoodTranslation = "";
+      STATE.history = [];
     }
     if (!STATE.enabled) {
       const overlay = document.getElementById("udemy-translate-overlay");

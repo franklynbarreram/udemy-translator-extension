@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Udemy Subtítulos en Español",
+  "name": "Udemy: Traductor de Subtítulos",
   "version": "1.0.0",
-  "description": "Traduce automáticamente los subtítulos de Udemy al español (o al idioma que elijas) en tiempo real.",
+  "description": "Traduce los subtítulos de Udemy al idioma que elijas en tiempo real.",
   "permissions": ["storage"],
   "host_permissions": [
     "https://*.udemy.com/*",

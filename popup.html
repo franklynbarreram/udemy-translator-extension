@@ -67,7 +67,7 @@
 </style>
 </head>
 <body>
-  <h1>Subtítulos Udemy</h1>
+  <h1>Traductor de Subtítulos</h1>
 
   <div class="row">
     <label for="enabled" style="margin: 0;">Traducción activada</label>
@@ -92,6 +92,12 @@
 
   <label for="fontSize">Tamaño de letra (px):</label>
   <input type="number" id="fontSize" min="10" max="60" step="1" value="20" />
+
+  <label for="maxHistory">Máximo de mensajes en historial:</label>
+  <input type="number" id="maxHistory" min="1" max="100" step="1" value="20" />
+
+  <label for="historyHeight">Altura máxima del historial (px):</label>
+  <input type="number" id="historyHeight" min="40" max="600" step="10" value="200" />
 
   <label for="provider">Motor de traducción:</label>
   <select id="provider">

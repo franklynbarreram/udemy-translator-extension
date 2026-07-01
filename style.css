@@ -1,13 +1,12 @@
 #udemy-translate-overlay {
   position: fixed;
   max-width: 70%;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.7) transparent; /* Firefox */
+  display: flex;
+  flex-direction: column;
   background: rgba(0, 0, 0, 0.92);
   color: #ffffff;
   line-height: 1.4;
-  padding: 6px 14px;
+  padding: 4px 10px 6px;
   border-radius: 4px;
   text-align: left;
   z-index: 2147483647;
@@ -15,24 +14,46 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-#udemy-translate-overlay::-webkit-scrollbar {
+#udemy-translate-handle {
+  flex-shrink: 0;
+  cursor: grab;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 13px;
+  letter-spacing: 2px;
+  user-select: none;
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 4px;
+}
+
+#udemy-translate-handle:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+#udemy-translate-content {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.7) transparent;
+}
+
+#udemy-translate-content::-webkit-scrollbar {
   width: 5px;
 }
 
-#udemy-translate-overlay::-webkit-scrollbar-track {
+#udemy-translate-content::-webkit-scrollbar-track {
   background: transparent;
 }
 
-#udemy-translate-overlay::-webkit-scrollbar-thumb {
+#udemy-translate-content::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.7);
   border-radius: 3px;
 }
 
-#udemy-translate-overlay::-webkit-scrollbar-thumb:hover {
+#udemy-translate-content::-webkit-scrollbar-thumb:hover {
   background: #ffffff;
 }
 
-#udemy-translate-overlay ul {
+#udemy-translate-content ul {
   margin: 0;
   padding: 0 0 0 18px;
   list-style: disc;

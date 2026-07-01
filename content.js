@@ -59,8 +59,54 @@
 
     overlay = document.createElement("div");
     overlay.id = "udemy-translate-overlay";
+
+    const handle = document.createElement("div");
+    handle.id = "udemy-translate-handle";
+    handle.textContent = "⠿";
+    overlay.appendChild(handle);
+
+    const content = document.createElement("div");
+    content.id = "udemy-translate-content";
+    overlay.appendChild(content);
+
     document.body.appendChild(overlay);
+    setupDrag(overlay, handle);
     return overlay;
+  }
+
+  function setupDrag(overlay, handle) {
+    let dragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    handle.addEventListener("mousedown", (e) => {
+      dragging = true;
+      const rect = overlay.getBoundingClientRect();
+      offsetX = e.clientX - (rect.left + rect.width / 2);
+      offsetY = e.clientY - (rect.top + rect.height / 2);
+      handle.style.cursor = "grabbing";
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!dragging) return;
+      const cx = e.clientX - offsetX;
+      const cy = e.clientY - offsetY;
+      STATE.positionPercentX = Math.min(100, Math.max(0, (cx / window.innerWidth) * 100));
+      STATE.positionPercent = Math.min(100, Math.max(0, (cy / window.innerHeight) * 100));
+      applyPosition(overlay);
+    });
+
+    document.addEventListener("mouseup", () => {
+      if (!dragging) return;
+      dragging = false;
+      handle.style.cursor = "";
+      chrome.storage.sync.set({
+        positionPercent: STATE.positionPercent,
+        positionPercentX: STATE.positionPercentX,
+      });
+    });
   }
 
   function applyPosition(overlay) {
@@ -70,11 +116,14 @@
     overlay.style.right = "";
     overlay.style.transform = "translate(-50%, -50%)";
     overlay.style.fontSize = STATE.fontSize + "px";
-    overlay.style.maxHeight = STATE.historyHeight + "px";
+    const content = overlay.querySelector("#udemy-translate-content");
+    if (content) content.style.maxHeight = STATE.historyHeight + "px";
   }
 
   function renderHistory(overlay) {
-    overlay.innerHTML = "";
+    const content = overlay.querySelector("#udemy-translate-content");
+    if (!content) return;
+    content.innerHTML = "";
     const ul = document.createElement("ul");
     STATE.history.forEach((item, i) => {
       const li = document.createElement("li");
@@ -85,8 +134,8 @@
           : "udemy-history-item";
       ul.appendChild(li);
     });
-    overlay.appendChild(ul);
-    overlay.scrollTop = overlay.scrollHeight;
+    content.appendChild(ul);
+    content.scrollTop = content.scrollHeight;
   }
 
   function ensureErrorBadge() {

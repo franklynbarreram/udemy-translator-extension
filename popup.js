@@ -1,7 +1,5 @@
 const enabledBox = document.getElementById("enabled");
 const langSelect = document.getElementById("lang");
-const positionPercentInput = document.getElementById("positionPercent");
-const positionPercentXInput = document.getElementById("positionPercentX");
 const fontSizeInput = document.getElementById("fontSize");
 const maxHistoryInput = document.getElementById("maxHistory");
 const historyHeightInput = document.getElementById("historyHeight");
@@ -23,8 +21,6 @@ const HELP_TEXT = {
 const DEFAULTS = {
   enabled: true,
   targetLang: "es",
-  positionPercent: 50,
-  positionPercentX: 50,
   fontSize: 20,
   maxHistory: 20,
   historyHeight: 200,
@@ -39,12 +35,11 @@ let loadedKeys = { geminiApiKey: "", groqApiKey: "" };
 chrome.storage.sync.get(DEFAULTS, (items) => {
   enabledBox.checked = items.enabled;
   langSelect.value = items.targetLang;
-  positionPercentInput.value = items.positionPercent;
-  positionPercentXInput.value = items.positionPercentX;
   fontSizeInput.value = items.fontSize;
   maxHistoryInput.value = items.maxHistory;
   historyHeightInput.value = items.historyHeight;
   providerSelect.value = items.provider;
+
   contextInput.value = items.courseContext;
   loadedKeys.geminiApiKey = items.geminiApiKey;
   loadedKeys.groqApiKey = items.groqApiKey;
@@ -87,16 +82,6 @@ function debouncedSave(obj) {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => chrome.storage.sync.set(obj), 400);
 }
-
-positionPercentInput.addEventListener("input", () => {
-  const val = clamp(Number(positionPercentInput.value), 0, 100);
-  debouncedSave({ positionPercent: val });
-});
-
-positionPercentXInput.addEventListener("input", () => {
-  const val = clamp(Number(positionPercentXInput.value), 0, 100);
-  debouncedSave({ positionPercentX: val });
-});
 
 fontSizeInput.addEventListener("input", () => {
   const val = clamp(Number(fontSizeInput.value), 10, 60);

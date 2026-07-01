@@ -305,8 +305,8 @@
     const text = captionNode ? captionNode.textContent.trim() : "";
 
     if (!text) {
-      overlay.style.display = "none";
       STATE.lastOriginalText = "";
+      if (STATE.history.length === 0) overlay.style.display = "none";
       return;
     }
 

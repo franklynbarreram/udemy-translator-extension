@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    width: 280px;
+    padding: 12px;
+  }
+  h1 {
+    font-size: 14px;
+    margin: 0 0 10px;
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: #444;
+  }
+  select,
+  input[type="text"],
+  input[type="number"],
+  input[type="password"],
+  textarea {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 12px;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 50px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .footer {
+    font-size: 10px;
+    color: #888;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .footer a {
+    color: #6b6bff;
+  }
+  #aiFields {
+    border-top: 1px solid #eee;
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  #aiFields.hidden {
+    display: none;
+  }
+  .status {
+    font-size: 11px;
+    margin-bottom: 10px;
+    min-height: 14px;
+  }
+  .status.ok { color: #2e7d32; }
+  .status.err { color: #c62828; }
+</style>
+</head>
+<body>
+  <h1>Subtítulos Udemy</h1>
+
+  <div class="row">
+    <label for="enabled" style="margin: 0;">Traducción activada</label>
+    <input type="checkbox" id="enabled" />
+  </div>
+
+  <label for="lang">Traducir a:</label>
+  <select id="lang">
+    <option value="es">Español</option>
+    <option value="en">Inglés</option>
+    <option value="pt">Portugués</option>
+    <option value="fr">Francés</option>
+    <option value="de">Alemán</option>
+    <option value="it">Italiano</option>
+  </select>
+
+  <label for="positionPercent">Posición vertical (% desde arriba):</label>
+  <input type="number" id="positionPercent" min="0" max="100" step="1" value="50" />
+
+  <label for="positionPercentX">Posición horizontal (% desde la izquierda):</label>
+  <input type="number" id="positionPercentX" min="0" max="100" step="1" value="50" />
+
+  <label for="fontSize">Tamaño de letra (px):</label>
+  <input type="number" id="fontSize" min="10" max="60" step="1" value="20" />
+
+  <label for="provider">Motor de traducción:</label>
+  <select id="provider">
+    <option value="free">Gratis (rápido, sin cuenta)</option>
+    <option value="gemini">Gemini (con tu API key de Google)</option>
+    <option value="groq">Groq (gratis, sin tarjeta, con tu API key)</option>
+  </select>
+
+  <div id="aiFields">
+    <label for="apiKey" id="apiKeyLabel">Tu API key:</label>
+    <input type="password" id="apiKey" placeholder="Pega tu API key aquí" autocomplete="off" />
+    <div class="footer" id="apiKeyHelp" style="margin-bottom: 10px;"></div>
+
+    <label for="context">Contexto del curso (opcional):</label>
+    <textarea id="context" placeholder="Ej: Este es un curso de certificación CCA-F sobre la API de Claude. Usa términos técnicos correctos como 'token', 'prompt', 'API key', etc."></textarea>
+
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="footer">
+    Recarga la clase de Udemy después de cambiar la config.
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

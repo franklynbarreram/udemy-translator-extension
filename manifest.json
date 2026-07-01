@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Udemy Subtítulos en Español",
+  "version": "1.0.0",
+  "description": "Traduce automáticamente los subtítulos de Udemy al español (o al idioma que elijas) en tiempo real.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://*.udemy.com/*",
+    "https://translate.googleapis.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.groq.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*.udemy.com/*"],
+      "js": ["content.js"],
+      "css": ["style.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

@@ -2,7 +2,6 @@ const enabledBox = document.getElementById("enabled");
 const langSelect = document.getElementById("lang");
 const fontSizeInput = document.getElementById("fontSize");
 const maxHistoryInput = document.getElementById("maxHistory");
-const historyHeightInput = document.getElementById("historyHeight");
 const providerSelect = document.getElementById("provider");
 const apiKeyInput = document.getElementById("apiKey");
 const apiKeyLabel = document.getElementById("apiKeyLabel");
@@ -23,7 +22,6 @@ const DEFAULTS = {
   targetLang: "es",
   fontSize: 20,
   maxHistory: 20,
-  historyHeight: 200,
   provider: "free",
   geminiApiKey: "",
   groqApiKey: "",
@@ -37,7 +35,6 @@ chrome.storage.sync.get(DEFAULTS, (items) => {
   langSelect.value = items.targetLang;
   fontSizeInput.value = items.fontSize;
   maxHistoryInput.value = items.maxHistory;
-  historyHeightInput.value = items.historyHeight;
   providerSelect.value = items.provider;
 
   contextInput.value = items.courseContext;
@@ -91,11 +88,6 @@ fontSizeInput.addEventListener("input", () => {
 maxHistoryInput.addEventListener("input", () => {
   const val = clamp(Number(maxHistoryInput.value), 1, 100);
   debouncedSave({ maxHistory: val });
-});
-
-historyHeightInput.addEventListener("input", () => {
-  const val = clamp(Number(historyHeightInput.value), 40, 600);
-  debouncedSave({ historyHeight: val });
 });
 
 providerSelect.addEventListener("change", () => {

@@ -30,7 +30,8 @@
     cache: new Map(),
     history: [],
     maxHistory: 20,
-    historyHeight: 200,
+    overlayWidth: 320,
+    overlayHeight: 220,
   };
 
   // Varios selectores de respaldo por si Udemy cambia los nombres de clase.
@@ -69,9 +70,48 @@
     content.id = "udemy-translate-content";
     overlay.appendChild(content);
 
+    const resizeHandle = document.createElement("div");
+    resizeHandle.id = "udemy-translate-resize";
+    resizeHandle.textContent = "◢";
+    overlay.appendChild(resizeHandle);
+
     document.body.appendChild(overlay);
     setupDrag(overlay, handle);
+    setupResize(overlay, resizeHandle);
     return overlay;
+  }
+
+  function setupResize(overlay, resizeHandle) {
+    let resizing = false;
+    let startX = 0, startY = 0, startW = 0, startH = 0;
+
+    resizeHandle.addEventListener("mousedown", (e) => {
+      resizing = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      startW = overlay.offsetWidth;
+      startH = STATE.overlayHeight;
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!resizing) return;
+      STATE.overlayWidth = Math.max(160, startW + (e.clientX - startX));
+      STATE.overlayHeight = Math.max(60, startH + (e.clientY - startY));
+      overlay.style.width = STATE.overlayWidth + "px";
+      const content = overlay.querySelector("#udemy-translate-content");
+      if (content) content.style.maxHeight = STATE.overlayHeight + "px";
+    });
+
+    document.addEventListener("mouseup", () => {
+      if (!resizing) return;
+      resizing = false;
+      chrome.storage.sync.set({
+        overlayWidth: STATE.overlayWidth,
+        overlayHeight: STATE.overlayHeight,
+      });
+    });
   }
 
   function setupDrag(overlay, handle) {
@@ -116,8 +156,9 @@
     overlay.style.right = "";
     overlay.style.transform = "translate(-50%, -50%)";
     overlay.style.fontSize = STATE.fontSize + "px";
+    overlay.style.width = STATE.overlayWidth + "px";
     const content = overlay.querySelector("#udemy-translate-content");
-    if (content) content.style.maxHeight = STATE.historyHeight + "px";
+    if (content) content.style.maxHeight = STATE.overlayHeight + "px";
   }
 
   function renderHistory(overlay) {
@@ -385,7 +426,8 @@
         positionPercentX: 50,
         fontSize: 20,
         maxHistory: 20,
-        historyHeight: 200,
+        overlayWidth: 320,
+        overlayHeight: 220,
         provider: "free",
         geminiApiKey: "",
         groqApiKey: "",
@@ -398,7 +440,8 @@
         STATE.positionPercentX = items.positionPercentX;
         STATE.fontSize = items.fontSize;
         STATE.maxHistory = items.maxHistory;
-        STATE.historyHeight = items.historyHeight;
+        STATE.overlayWidth = items.overlayWidth;
+        STATE.overlayHeight = items.overlayHeight;
         STATE.provider = items.provider;
         STATE.geminiApiKey = items.geminiApiKey;
         STATE.groqApiKey = items.groqApiKey;
@@ -417,7 +460,8 @@
       STATE.maxHistory = changes.maxHistory.newValue;
       while (STATE.history.length > STATE.maxHistory) STATE.history.shift();
     }
-    if (changes.historyHeight) STATE.historyHeight = changes.historyHeight.newValue;
+    if (changes.overlayWidth) STATE.overlayWidth = changes.overlayWidth.newValue;
+    if (changes.overlayHeight) STATE.overlayHeight = changes.overlayHeight.newValue;
     if (changes.provider) {
       STATE.provider = changes.provider.newValue;
       STATE.lastOriginalText = "";
